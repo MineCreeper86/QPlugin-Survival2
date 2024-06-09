@@ -60,11 +60,11 @@ public class SegmentMap {
                         new Location(ov, -18, 65, 146),
                 }));
         segMap.put("000e",
-                new Segment(7, false, "L3下行至清水河区段000e", new Location[]{
+                new Segment(7, false, "L3下行至高铁站区段000e", new Location[]{
                         new Location(ov, -18, 84, 316),
                 }));
         segMap.put("000f",
-                new Segment(7, false, "L3下行至清水河区段000f", new Location[]{
+                new Segment(7, false, "L3下行至高铁站区段000f", new Location[]{
                         new Location(ov, -18, 83, 427),
                 }));
     }
@@ -164,6 +164,11 @@ public class SegmentMap {
         }
 
         public void leave(Minecart minecart) {
+            if(queueing.contains(minecart)) {
+                queueing.remove(minecart);
+                occupied = minecart;
+                minecart.getPassengers().getFirst().sendMessage("限速已解除（已离开红灯区段）。");
+            }
             if(minecart == occupied) {
                 if(!queueing.isEmpty()) {
                     Minecart cart;
@@ -171,7 +176,7 @@ public class SegmentMap {
                         cart = queueing.removeFirst();
                     } while (cart.isDead());
                     occupied = cart;
-                    if(!minecart.getPassengers().isEmpty()  && !this.station) cart.getPassengers().getFirst().sendMessage("限速已解除。");
+                    if(!minecart.getPassengers().isEmpty()  && !this.station) cart.getPassengers().getFirst().sendMessage("限速已解除（前车离开）。");
                 } else occupied = null;
             }
         }

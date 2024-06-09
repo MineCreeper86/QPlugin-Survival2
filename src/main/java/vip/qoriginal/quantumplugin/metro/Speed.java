@@ -32,11 +32,7 @@ public class Speed implements Listener{
             Minecart minecart = (Minecart) event.getVehicle();
             Material blockTypeBelow = minecart.getLocation().subtract(0, 1, 0).getBlock().getType();
             if (minecart.getScoreboardTags().contains("accel")) {
-                if (blockTypeBelow == Material.SMOOTH_STONE) { //普刹车
-                    calc = boost(minecart, .4d, .005, f, t);
-                } else if (blockTypeBelow == Material.SMOOTH_STONE_SLAB) { //急刹车
-                    calc = boost(minecart, .1d, .02, f, t);
-                } else if (minecart.getScoreboardTags().contains("curve")){ //弯道减速
+                if (minecart.getScoreboardTags().contains("curve")){ //弯道减速
                     boolean flag = false;
                     if (minecart.getLocation().getBlock().getBlockData() instanceof Rail) {
                         Rail rail = (Rail) minecart.getLocation().getBlock().getBlockData();
@@ -48,6 +44,10 @@ public class Speed implements Listener{
                     }
                     calc = boost(minecart, flag?0.5:0.72, flag?.015:.0008, f, t);
                     minecart.setMaxSpeed(flag?0.6:0.72);
+                } else if (blockTypeBelow == Material.SMOOTH_STONE) { //普刹车
+                    calc = boost(minecart, .4d, .005, f, t);
+                } else if (blockTypeBelow == Material.SMOOTH_STONE_SLAB) { //急刹车
+                    calc = boost(minecart, .1d, .02, f, t);
                 } else {
                     calc = boost(minecart, minecart.getScoreboardTags().contains("cr200j") ? 1.6d : 0.9d, .005, f, t);
                 }
@@ -68,7 +68,7 @@ public class Speed implements Listener{
                 break;
             }
         }
-        if (cs > 0 && minecart.getLocation().getBlock().isBlockPowered() && !minecart.getScoreboardTags().contains("queueing")) {
+        if (cs > 0 && minecart.getLocation().getBlock().isBlockPowered()) {
             // ns = Computed Next Speed
             double ns = ts>cs?Math.min(cs+a,cs*.7+ts*.3):Math.max(cs-a,cs*.7+ts*.3);
             double factor = ns / cs;
